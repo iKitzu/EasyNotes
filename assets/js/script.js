@@ -128,7 +128,7 @@ function setupSwipeToDelete(noteElement, index) {
 }
 
 
-// Modificar `updateView` para añadir el evento de deslizamiento
+// Modificar la función updateView para incluir la configuración de búsqueda
 function updateView() {
     const container = document.getElementById('notesContainer');
     
@@ -158,9 +158,7 @@ function updateView() {
                 showNoteDetail(note, index);
             });
 
-            // Configurar el deslizamiento para eliminar
             setupSwipeToDelete(noteElement, index);
-
             container.appendChild(noteElement);
         });
     }
@@ -515,10 +513,7 @@ function truncateTitle(text, maxLength = 100) {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
 }
-
-// Cargar las notas al iniciar la aplicación
-updateView();
-
+// --------------------------------------------------------------------------------------------------
 
 
 // Primero agregamos la función para mostrar el error modal
@@ -557,3 +552,7 @@ function showErrorModal(message) {
         errorDialog.remove();
     });
 }
+
+
+// Cargar las notas al iniciar la aplicación
+updateView();
