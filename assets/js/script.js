@@ -35,7 +35,7 @@ function setupSwipeToDelete(noteElement, index) {
             <img src="/assets/img/delete.png" alt="Eliminar" width="27" height="auto" />
         </div>
     `;
-    deleteOverlay.style.backgroundColor = 'rgba(255, 0, 0)'; // Intensificado
+    deleteOverlay.style.backgroundColor = 'rgba(255, 0, 0)';
     deleteOverlay.style.position = 'absolute';
     deleteOverlay.style.top = '0';
     deleteOverlay.style.left = '0';
@@ -47,11 +47,44 @@ function setupSwipeToDelete(noteElement, index) {
     deleteOverlay.style.color = 'white';
     deleteOverlay.style.opacity = '0';
     deleteOverlay.style.transition = 'opacity 0.3s';
-
-    // Agregar border-radius
-    deleteOverlay.style.borderRadius = '10px'; // Ajusta el valor según lo desees
+    deleteOverlay.style.borderRadius = '10px';
 
     noteElement.appendChild(deleteOverlay);
+
+    // Crear la modal de confirmación
+    const deleteModal = document.createElement('div');
+    deleteModal.innerHTML = `
+        <div id="deleteNoteDialog" class="modal-overlay" style="display: none;">
+            <div class="modal">
+                <div class="flex flex-col items-center mb-4">
+                    <div class="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center mb-3">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"/>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                            <line x1="10" y1="11" x2="10" y2="17"/>
+                            <line x1="14" y1="11" x2="14" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-center">Delete Note</h3>
+                    <p class="text-gray-500 text-center mt-2">Are you sure you want to delete this note? This action cannot be undone.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors" id="cancelDeleteButton">
+                        Cancel
+                    </button>
+                    <button class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors" id="confirmDeleteButton">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(deleteModal);
+
+    const deleteDialog = deleteModal.querySelector('#deleteNoteDialog');
+    const confirmDeleteButton = deleteModal.querySelector('#confirmDeleteButton');
+    const cancelDeleteButton = deleteModal.querySelector('#cancelDeleteButton');
 
     // Eventos touch para el deslizamiento
     noteElement.addEventListener('touchstart', (e) => {
@@ -63,7 +96,7 @@ function setupSwipeToDelete(noteElement, index) {
         const touchX = e.touches[0].clientX;
         const deltaX = touchX - startX;
 
-        if (deltaX > 50) { // Ajusta el valor según el tamaño del deslizamiento
+        if (deltaX > 50) {
             isSwiping = true;
             deleteOverlay.style.opacity = '1';
         }
@@ -71,14 +104,26 @@ function setupSwipeToDelete(noteElement, index) {
 
     noteElement.addEventListener('touchend', () => {
         if (isSwiping) {
-            if (confirm('¿Estás seguro de que quieres eliminar esta nota?')) {
-                notes.splice(index, 1);
-                saveNotes();
-                updateView();
-            } else {
-                deleteOverlay.style.opacity = '0';
-            }
+            deleteDialog.style.display = 'flex';
         }
+    });
+
+    // Event listeners para la modal
+    confirmDeleteButton.addEventListener('click', () => {
+        notes.splice(index, 1);
+        saveNotes();
+        updateView();
+        deleteDialog.style.display = 'none';
+    });
+
+    cancelDeleteButton.addEventListener('click', () => {
+        deleteDialog.style.display = 'none';
+        deleteOverlay.style.opacity = '0';
+    });
+
+    // Limpiar la modal cuando se elimine la nota
+    noteElement.addEventListener('remove', () => {
+        deleteModal.remove();
     });
 }
 
@@ -250,7 +295,7 @@ function showNoteDetail(note, index) {
             originalContent = newContent;
             saveChangesDialog.style.display = 'none';
         } else {
-            alert('Title and content cannot be empty.');
+            showErrorModal('Title and content cannot be empty.');
         }
     }
 
@@ -404,7 +449,7 @@ function createNewNote() {
             saveNotes();
             exitNote();
         } else {
-            alert('Title and content cannot be empty.');
+            showErrorModal('Title and content cannot be empty.');
             saveChangesDialog.style.display = 'none';
         }
     }
@@ -474,3 +519,41 @@ function truncateTitle(text, maxLength = 100) {
 // Cargar las notas al iniciar la aplicación
 updateView();
 
+
+
+// Primero agregamos la función para mostrar el error modal
+function showErrorModal(message) {
+    const modalHTML = `
+        <div id="errorDialog" class="modal-overlay" style="display: flex;">
+            <div class="modal">
+                <div class="flex flex-col items-center mb-4">
+                    <div class="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center mb-3">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-center">Error</h3>
+                    <p class="text-gray-500 text-center mt-2">${message}</p>
+                </div>
+                <div class="flex justify-center">
+                    <button class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors" id="errorOkButton">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Agregar el modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Configurar el event listener para el botón OK
+    const errorDialog = document.getElementById('errorDialog');
+    const okButton = document.getElementById('errorOkButton');
+
+    okButton.addEventListener('click', () => {
+        errorDialog.remove();
+    });
+}
