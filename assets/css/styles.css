@@ -280,27 +280,45 @@ main {
 
 /* Estilo para el modal de nueva nota */
 .modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 1.5rem;
+    background-color: #1a1a1a;
     border-radius: 12px;
+    padding: 1.5rem;
     width: 90%;
-    max-width: 500px;
-    z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    animation: slideUp 0.2s ease-out;
+    border: 1px solid #333;
 }
 
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button hover effects */
+.modal button {
+    transition: all 0.2s ease;
+}
+
+.modal button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.modal button:active {
+    transform: translateY(0);
+    box-shadow: none;
 }
 
 .modal-header {
@@ -440,7 +458,7 @@ main {
 
 /* Estilos para el botón de guardar */
 .save-button {
-    color: #2196f3;
+    color: #ffffff;
 }
 
 /* Asegurar que el contenido editable tenga un cursor tipo texto */
@@ -458,11 +476,112 @@ main {
 
 /* ------------------------------------------------------------------------------------  */
 
+/* Modal overlay background */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
 
+/* Modal dialog box */
+.modal {
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 350px; /* Añadido un ancho máximo fijo */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.2s ease-out;
+    text-align: center;
+}
 
+/* Modal content styles */
+.modal h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
 
+.modal p {
+    color: #9ca3af;
+    margin: 0.5rem 0 1.5rem;
+    font-size: 0.875rem;
+}
 
+/* Modal buttons container */
+.modal .flex {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+}
 
+/* Button styles */
+.modal button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    flex: 1;
+    min-width: 100px;
+    max-width: 120px; /* Añadido un ancho máximo para los botones */
+}
+
+/* Discard button */
+.modal button:first-child {
+    background-color: #dc2626;
+    color: white;
+}
+
+.modal button:first-child:hover {
+    background-color: #b91c1c;
+}
+
+/* Save/Keep button */
+.modal button:last-child {
+    background-color: #22c55e;
+    color: white;
+}
+
+.modal button:last-child:hover {
+    background-color: #16a34a;
+}
+
+/* Icon container */
+.modal .flex-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Modal animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 
 /* // ------------------------------------------------------------------------------------  */
