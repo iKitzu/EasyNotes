@@ -1,0 +1,582 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Nunito-Regular";
+    background-color: #1a1a1a;
+    color: white;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.app {
+    min-height: 100vh;
+    position: relative;
+}
+
+header {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background-color: #1a1a1a;
+    z-index: 10;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.icon-button {
+    background-color: #2a2a2a;
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.icon-button:hover {
+    background-color: #3a3a3a;
+}
+
+main {
+    padding: 1.5rem;
+}
+
+.empty-state {
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+}
+
+.empty-state img {
+    width: 12rem;
+    height: 12rem;
+    object-fit: cover;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+}
+
+.empty-state p {
+    font-size: 1.125rem;
+}
+
+.fab {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background-color: #252525;
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: -3px 3px 8px -1px rgba(0, 0, 0, 0.575), -4px 2px 6px -1px rgba(0, 0, 0, 0.368);
+    transition: background-color 0.2s;
+    z-index: 100;
+}
+
+.fab:hover {
+    background-color: #4a4a4a;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4a4a4a;
+}
+
+/* Estilos para las notas */
+.note {
+    background-color: #f4f4f5; /* Color de fondo por defecto */
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: black;
+    font-size: 1rem;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.note:hover {
+    transform: scale(1.05);
+}
+
+.note p {
+    margin: 0;
+}
+
+/* Colores de las notas */
+.note:nth-child(1) { background-color: #ffcbf2; }
+.note:nth-child(2) { background-color: #ffc8dd; }
+.note:nth-child(3) { background-color: #ffdfd3; }
+.note:nth-child(4) { background-color: #bde0fe; }
+.note:nth-child(5) { background-color: #a2d2ff; }
+
+
+
+/* Añadir estilos para arrastrar */
+.note {
+    background-color: #f4f4f5;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: black;
+    font-size: 1rem;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, opacity 0.3s ease;
+    position: relative;
+    cursor: grab;
+}
+
+.note:hover {
+    transform: scale(1.05);
+}
+
+.note.dragging {
+    opacity: 0.6;
+}
+
+/* Indicadores de acción (edit/delete) */
+.note::after {
+    content: ' ';
+    position: absolute;
+    top: 50%;
+    width: 50px;
+    height: 50px;
+    opacity: 0.5;
+    transform: translateY(-50%);
+}
+
+.note.swipe-right::after {
+    right: -60px;
+    content: '🗑️';
+}
+
+.note.swipe-left::after {
+    left: -60px;
+    content: '✏️';
+}
+
+
+/* ------------------------------------------------------------------------------------  */
+
+/* Estilos para el wrapper de la nota y los indicadores de acción */
+.note-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.action-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem; /* Reducido el padding para que los iconos estén más a los lados */
+    z-index: 1;
+}
+
+.action-indicator {
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    padding: 1rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.delete-action {
+    margin-left: auto;
+}
+
+.edit-action {
+    margin-right: auto;
+}
+
+/* Mostrar indicadores según la dirección del deslizamiento */
+.note-wrapper.showing-delete .delete-action {
+    opacity: 1;
+}
+
+.note-wrapper.showing-edit .edit-action {
+    opacity: 1;
+}
+
+/* Ajustes para la nota */
+.note {
+    position: relative;
+    z-index: 2;
+    background-color: #f4f4f5;
+    padding: 1rem;
+    margin-bottom: 0;
+    transition: transform 0.3s ease-out;
+}
+
+.note-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.note-content {
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* Gradientes de fondo para las acciones */
+.note-wrapper.showing-delete {
+    background: linear-gradient(to right, transparent, #ff4444);
+}
+
+.note-wrapper.showing-edit {
+    background: linear-gradient(to left, transparent, #2196f3);
+}
+
+/* Estilo para el modal de nueva nota */
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.modal-header {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.modal-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.modal-button {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.modal-button.cancel {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.modal-button.save {
+    background-color: #2196f3;
+    color: white;
+}
+
+
+/* Eliminar estilos relacionados con el deslizamiento */
+.note-wrapper,
+.action-background,
+.action-indicator,
+.showing-delete,
+.showing-edit {
+    display: none;
+}
+
+/* Estilos actualizados para la vista detallada */
+.note-detail-page {
+    padding: 1rem;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+.note-detail-content {
+    padding: 1.5rem;
+    min-height: calc(100vh - 92px);
+}
+
+.note-detail-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.note-detail-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #e5e5e5;
+    white-space: pre-wrap;
+}
+
+/* Actualizar estilos del header */
+.detail-header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+}
+
+/* Actualizar estilos de la nota en la lista */
+.note {
+    background-color: #f4f4f5;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    color: black;
+    font-size: 1rem;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+
+/**/
+
+/* Estilos para los placeholders de contenido editable */
+[contenteditable="true"]:empty:before {
+    content: attr(data-placeholder);
+    color: #666;
+    font-style: italic;
+}
+
+/* Estilos para el modo pantalla completa */
+.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #1a1a1a;
+    z-index: 1000;
+}
+
+/* Ajustes para la animación de transición */
+.app {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Estilos para el botón de guardar */
+.save-button {
+    color: #2196f3;
+}
+
+/* Asegurar que el contenido editable tenga un cursor tipo texto */
+[contenteditable="true"] {
+    cursor: text;
+    outline: none;
+}
+
+/* Estilo para cuando el contenido editable está enfocado */
+[contenteditable="true"]:focus {
+    border-bottom: 2px solid #2196f3;
+    padding-bottom: 4px;
+}
+
+
+/* ------------------------------------------------------------------------------------  */
+
+
+
+
+
+
+
+
+/* // ------------------------------------------------------------------------------------  */
+
+
+.info-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-content {
+    background-color: #252525;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 320px;
+    overflow: hidden;
+    animation: slideUp 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #333;
+}
+
+.info-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+}
+
+.info-body {
+    padding: 1rem;
+}
+
+.info-item {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-label {
+    color: #9ca3af;
+    font-size: 0.9rem;
+}
+
+.info-value {
+    color: white;
+    font-size: 0.9rem;
+}
+
+.made-by {
+    text-align: center;
+    color: #9ca3af;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.info-popup.show {
+    display: flex;
+}
+
+
+/* ------------------------------------------------------------------------------------  */
+
+/* Estilos para el mensaje de advertencia en dispositivos de escritorio */
+.desktop-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #1a1a1a;
+    color: white;
+    display: flex;
+    flex-direction: column; /* Coloca los elementos en columna */
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    text-align: center;
+    padding: 1rem;
+    z-index: 100;
+}
+
+/* // ------------------------------------------------------------------------------------  */
