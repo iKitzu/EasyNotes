@@ -266,7 +266,7 @@ function createNewNote() {
     const textElement = document.querySelector('.note-detail-text');
 
     function getRandomColor() {
-        const colors = ['#ffcbf2', '#ffc8dd', '#ffdfd3', '#bde0fe', '#a2d2ff'];
+        const colors = ['#fd99ff', '#ff9e9e', '#91f48f', '#fff599', '#9effff', '#b69cff'];
         return colors[Math.floor(Math.random() * colors.length)];
     }
 

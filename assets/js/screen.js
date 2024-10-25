@@ -13,24 +13,22 @@ function checkDevice() {
 window.addEventListener('resize', checkDevice);
 window.addEventListener('load', checkDevice);
 
-// Get the elements
-const infoButton = document.querySelector('.header-buttons button:nth-child(2)');
-const infoPopup = document.getElementById('infoPopup');
-const closeInfoBtn = document.getElementById('closeInfoBtn');
+// Selecciona el contenedor principal
+document.addEventListener('DOMContentLoaded', () => {
+    const mainContainer = document.querySelector('body'); // Escoge un contenedor que no cambia, como 'body'
 
-// Show popup when info button is clicked
-infoButton.addEventListener('click', () => {
-    infoPopup.classList.add('show');
-});
+    // Usa delegación de eventos para el botón de información
+    mainContainer.addEventListener('click', (event) => {
+        const infoPopup = document.getElementById('infoPopup');
 
-// Hide popup when close button is clicked
-closeInfoBtn.addEventListener('click', () => {
-    infoPopup.classList.remove('show');
-});
+        if (event.target.closest('.icon-button[aria-label="Información"]')) {
+            // Muestra el popup al hacer clic en el botón de información
+            infoPopup.classList.add('show');
+        }
 
-// Hide popup when clicking outside
-infoPopup.addEventListener('click', (e) => {
-    if (e.target === infoPopup) {
-        infoPopup.classList.remove('show');
-    }
+        // Cierra el popup al hacer clic en el botón de cerrar
+        if (event.target.id === 'closeInfoBtn' || event.target === infoPopup) {
+            infoPopup.classList.remove('show');
+        }
+    });
 });
