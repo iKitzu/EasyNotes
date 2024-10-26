@@ -559,3 +559,24 @@ updateView();
 
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+document.addEventListener("click", (event) => {
+    if (event.target.closest('.header-buttons .icon-button[aria-label="Buscar"]')) {
+        const searchModal = document.getElementById("searchModal");
+        searchModal.style.display = "flex";
+    } else if (event.target.closest(".close-search-button")) {
+        const searchModal = document.getElementById("searchModal");
+        searchModal.style.display = "none";
+    }
+});
+
+// Cierra el modal al hacer clic fuera del área de búsqueda
+window.addEventListener("click", (e) => {
+    const searchModal = document.getElementById("searchModal");
+    if (e.target === searchModal) {
+        searchModal.style.display = "none";
+    }
+});
+
+// ----------------------------------------------------------------------------------------------------------------
+
