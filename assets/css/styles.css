@@ -791,3 +791,23 @@ main {
 }
 
 /* // ------------------------------------------------------------------------------------  */
+
+/* Color para el botón de Cancelar */
+#cancelDeleteButton {
+    background-color: #22c55e;
+}
+
+#cancelDeleteButton:hover {
+    background-color: #16a34a; 
+}
+
+/* Color para el botón de Confirmar (Eliminar) */
+#confirmDeleteButton {
+    background-color: #dc2626; 
+}
+
+#confirmDeleteButton:hover {
+    background-color: #b91c1c; 
+}
+
+/* // ------------------------------------------------------------------------------------  */
