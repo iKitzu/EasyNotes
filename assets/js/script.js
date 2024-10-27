@@ -127,45 +127,6 @@ function setupSwipeToDelete(noteElement, index) {
     });
 }
 
-
-// Modificar la función updateView para incluir la configuración de búsqueda
-function updateView() {
-    const container = document.getElementById('notesContainer');
-    
-    if (notes.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <img src="/assets/img/rafiki.png" alt="Empty notes illustration">
-                <p>Create your first note!</p>
-            </div>
-        `;
-    } else {
-        container.innerHTML = '';
-        notes.forEach((note, index) => {
-            const noteElement = document.createElement('div');
-            noteElement.classList.add('note');
-            noteElement.style.backgroundColor = note.color;
-            noteElement.innerHTML = `
-                <div class="note-title">${truncateTitle(note.title)}</div>
-                <div class="note-preview">${truncateText(note.content)}</div>
-            `;
-            
-            if (note.title.length > 40) {
-                noteElement.querySelector('.note-title').title = note.title;
-            }
-            
-            noteElement.addEventListener('click', () => {
-                showNoteDetail(note, index);
-            });
-
-            setupSwipeToDelete(noteElement, index);
-            container.appendChild(noteElement);
-        });
-    }
-
-    setupEventListeners();
-}
-
 // Modify the showNoteDetail function to include state for the confirmation dialogs
 function showNoteDetail(note, index) {
     const mainContainer = document.querySelector('.app');

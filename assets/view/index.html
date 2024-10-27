@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyNotes</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/variable.css">
+
+    <link rel="shortcut icon" href="/assets/img/notas.png" type="image/x-icon">
+</head>
+<body>
+    <div class="app">
+        <div class="info-popup" id="infoPopup">
+            <div class="info-content">
+                <div class="info-header" style="display: none;">
+                    <h3>Information</h3>
+                    <button class="close-btn" id="closeInfoBtn">×</button>
+                </div>
+                <div class="info-body">
+                    <div class="info-item">
+                        <span class="info-label">Designed by</span>
+                        <span class="info-value">Divya (Figma)</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Redesigned by</span>
+                        <span class="info-value">Kenneth Santiago</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Illustrations</span>
+                        <span class="info-value">idk xd</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Icons</span>
+                        <span class="info-value">Lucide Icons</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Font</span>
+                        <span class="info-value">System Font Stack</span>
+                    </div>
+                    <div class="made-by">
+                        Made by Kenneth Santiago
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <header>
+            <h1>Notes</h1>
+            <div class="header-buttons">
+                <button class="icon-button" aria-label="Buscar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <button class="icon-button" aria-label="Información">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <circle cx="12" cy="8" r="0.5"></circle>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        <div id="searchView" class="search-view">
+            <div class="search-bar">
+                <div class="search-input-container">
+                    <button class="close-button" id="closeSearch">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Search by the keyword..." 
+                        id="searchInput"
+                    >
+                </div>
+            </div>
+            
+            <div class="search-results">
+                <div class="no-results">
+                    <img src="/assets/img/cuate.png" alt="No results illustration" class="no-results-image">
+                    <p class="no-results-text">File not found. Try searching again.</p>
+                </div>
+            </div>
+        </div>        
+        
+        <main id="notesContainer">
+            <div class="empty-state">
+                <img src="/assets/img/rafiki.png" alt="Empty notes illustration">
+                <p>Create your first note!</p>
+            </div>
+        </main>
+
+        <button class="fab" aria-label="Crear nueva nota">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+    </div>
+
+
+    
+    <!--  END  -->
+    <!-- Mensaje para dispositivos no móviles -->
+    <div id="desktopMessage" class="desktop-message">
+        <p>Esta aplicación solo está disponible en dispositivos móviles.</p><br>
+        <p>Pronto en Sitios de Escritorio</p>
+    </div>
+    
+    <script src="/assets/js/script.js"></script>
+    <script src="/assets/js/screen.js"></script>
+</body>
+</html>

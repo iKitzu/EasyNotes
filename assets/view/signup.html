@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyNotes - Sign Up</title>
+    <link rel="stylesheet" href="/assets/css/styleEN.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-card">
+            <h1>Create Account</h1>
+            <form id="signupForm" onsubmit="return handleSignup(event)">
+                <div class="input-group">
+                    <input type="text" id="name" required>
+                    <label for="name">Full Name</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="email" required>
+                    <label for="email">Email</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" required minlength="8">
+                    <label for="password">Password</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="confirmPassword" required minlength="8">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <span id="passwordError" class="error-message"></span>
+                </div>
+                <button type="submit">Sign Up</button>
+                <p class="success-message" id="successMessage" style="display:none;"></p>
+            </form>
+            <p class="signup-link">Already have an account? <a href="/index.html">Login</a></p>
+        </div>
+    </div>
+    <script src="/assets/js/signup.js"></script>
+</body>
+</html>
