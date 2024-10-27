@@ -9,8 +9,8 @@ function handleLogin(event) {
         password: password
     };
 
-    // Enviar la solicitud POST al endpoint de inicio de sesión
-    fetch('http://localhost:8080/auth/login', { // Asegúrate de que esta URL sea correcta
+    // Actualiza la URL para que apunte al nuevo endpoint
+    fetch('http://172.16.101.158:8080/notes/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -32,7 +32,8 @@ async function handleSignup(event) {
     };
 
     try {
-        const response = await fetch('http://localhost:8080/api/usuarios', {
+        // Actualiza la URL para que apunte al nuevo endpoint
+        const response = await fetch('http://172.16.101.158:8080/notes/api/usuarios', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
