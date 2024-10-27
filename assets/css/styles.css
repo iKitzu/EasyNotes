@@ -890,3 +890,33 @@ main {
 }
 /**/
 
+.filtered-notes {
+    width: 100%;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.filtered-notes .note {
+    margin-bottom: 16px;
+    transition: transform 0.2s ease;
+}
+
+.filtered-notes .note:hover {
+    transform: scale(1.02);
+}
+
+.search-results {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+}
+
+.no-results {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
