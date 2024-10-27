@@ -560,22 +560,26 @@ updateView();
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-document.addEventListener("click", (event) => {
-    if (event.target.closest('.header-buttons .icon-button[aria-label="Buscar"]')) {
-        const searchModal = document.getElementById("searchModal");
-        searchModal.style.display = "flex";
-    } else if (event.target.closest(".close-search-button")) {
-        const searchModal = document.getElementById("searchModal");
-        searchModal.style.display = "none";
-    }
-});
+document.addEventListener('DOMContentLoaded', () => {
+    // Agregar el evento de delegación para el botón de búsqueda en el header
+    document.addEventListener('click', (event) => {
+        const searchButton = event.target.closest('button[aria-label="Buscar"]');
+        const closeSearchButton = event.target.closest('#closeSearch');
 
-// Cierra el modal al hacer clic fuera del área de búsqueda
-window.addEventListener("click", (e) => {
-    const searchModal = document.getElementById("searchModal");
-    if (e.target === searchModal) {
-        searchModal.style.display = "none";
-    }
-});
+        // Abrir la barra de búsqueda si se hace clic en el botón de búsqueda
+        if (searchButton) {
+            const searchView = document.getElementById('searchView');
+            if (searchView) {
+                searchView.style.display = 'flex';
+            }
+        }
 
-// ----------------------------------------------------------------------------------------------------------------
+        // Cerrar la barra de búsqueda si se hace clic en el botón de cerrar
+        if (closeSearchButton) {
+            const searchView = document.getElementById('searchView');
+            if (searchView) {
+                searchView.style.display = 'none';
+            }
+        }
+    });
+});

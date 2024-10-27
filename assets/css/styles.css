@@ -811,3 +811,33 @@ main {
 }
 
 /* // ------------------------------------------------------------------------------------  */
+
+
+/* Estilo para la vista de búsqueda en pantalla completa */
+.search-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.search-view header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-input {
+    flex: 1;
+    padding: 8px;
+    margin-left: 10px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+}
