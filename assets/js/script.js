@@ -560,33 +560,137 @@ updateView();
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 
-document.addEventListener('DOMContentLoaded', () => {
-    const getElements = () => ({
-        searchButton: document.querySelector('button[aria-label="Buscar"]'),
-        closeSearchButton: document.getElementById('closeSearch'),
-        searchView: document.getElementById('searchView'),
-        searchInput: document.getElementById('searchInput')
+// Función para filtrar notas
+function filterNotes(searchTerm) {
+    const searchResults = document.querySelector('.search-results');
+    const noResults = document.querySelector('.no-results');
+    
+    if (!searchTerm.trim()) {
+        searchResults.innerHTML = `
+            <div class="no-results">
+                <img src="/assets/img/cuate.png" alt="No results illustration" class="no-results-image">
+                <p class="no-results-text">Start typing to search notes...</p>
+            </div>
+        `;
+        return;
+    }
+
+    const filteredNotes = notes.filter(note => 
+        note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        note.content.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (filteredNotes.length === 0) {
+        searchResults.innerHTML = `
+            <div class="no-results">
+                <img src="/assets/img/cuate.png" alt="No results illustration" class="no-results-image">
+                <p class="no-results-text">No notes found matching "${searchTerm}"</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Mostrar resultados
+    searchResults.innerHTML = `
+        <div class="search-results-grid">
+            ${filteredNotes.map((note, index) => `
+                <div class="search-result-note" style="background-color: ${note.color}">
+                    <div class="note-title">${truncateTitle(note.title)}</div>
+                    <div class="note-preview">${truncateText(note.content)}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    // Agregar event listeners a las notas filtradas
+    const searchResultNotes = document.querySelectorAll('.search-result-note');
+    searchResultNotes.forEach((noteElement, index) => {
+        noteElement.addEventListener('click', () => {
+            const originalIndex = notes.findIndex(note => 
+                note.title === filteredNotes[index].title && 
+                note.content === filteredNotes[index].content
+            );
+            if (originalIndex !== -1) {
+                const searchView = document.getElementById('searchView');
+                searchView.style.display = 'none';
+                showNoteDetail(notes[originalIndex], originalIndex);
+            }
+        });
+    });
+}
+
+// Función para manejar la búsqueda
+function setupSearch() {
+    const searchInput = document.getElementById('searchInput');
+    let debounceTimeout;
+
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            filterNotes(e.target.value);
+        }, 300); // Debounce de 300ms para mejorar el rendimiento
     });
 
-    document.addEventListener('click', (event) => {
-        const { searchButton, closeSearchButton, searchView, searchInput } = getElements();
-        
-        if (event.target.closest('button[aria-label="Buscar"]')) {
-            searchView.style.display = 'flex';
-        }
-
-        if (event.target.closest('#closeSearch')) {
-            searchView.style.display = 'none';
-            searchInput.value = '';
-        }
+    // Limpiar búsqueda al cerrar
+    document.getElementById('closeSearch').addEventListener('click', () => {
+        searchInput.value = '';
+        filterNotes('');
     });
 
+    // Event listener para la tecla Escape
     document.addEventListener('keydown', (e) => {
-        const { searchView, searchInput } = getElements();
-        
-        if (e.key === 'Escape' && searchView.style.display === 'flex') {
-            searchView.style.display = 'none';
-            searchInput.value = '';
+        if (e.key === 'Escape') {
+            const searchView = document.getElementById('searchView');
+            if (searchView.style.display === 'flex') {
+                searchView.style.display = 'none';
+                searchInput.value = '';
+                filterNotes('');
+            }
         }
     });
-});
+}
+
+// Agregar estilos necesarios para los resultados de búsqueda
+const style = document.createElement('style');
+style.textContent = `
+    .search-results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+        padding: 16px;
+        width: 100%;
+        overflow-y: auto;
+    }
+
+    .search-result-note {
+        background-color: var(--note-color);
+        border-radius: 12px;
+        padding: 16px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .search-result-note:hover {
+        transform: scale(1.02);
+    }
+
+    .search-results {
+        overflow-y: auto;
+    }
+`;
+document.head.appendChild(style);
+
+// Actualizar la función setupEventListeners para incluir la búsqueda
+function setupEventListeners() {
+    const searchButton = document.querySelector('button[aria-label="Buscar"]');
+    const searchView = document.getElementById('searchView');
+    
+    if (searchButton) {
+        searchButton.addEventListener('click', () => {
+            searchView.style.display = 'flex';
+            document.getElementById('searchInput').focus();
+        });
+    }
+    
+    setupSearch();
+}
