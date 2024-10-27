@@ -561,25 +561,58 @@ updateView();
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Agregar el evento de delegación para el botón de búsqueda en el header
-    document.addEventListener('click', (event) => {
-        const searchButton = event.target.closest('button[aria-label="Buscar"]');
-        const closeSearchButton = event.target.closest('#closeSearch');
+    // Función para actualizar referencias de elementos dinámicamente
+    const getElements = () => ({
+        searchButton: document.querySelector('button[aria-label="Buscar"]'),
+        closeSearchButton: document.getElementById('closeSearch'),
+        clearButton: document.getElementById('clearSearch'),
+        searchView: document.getElementById('searchView'),
+        searchInput: document.getElementById('searchInput')
+    });
 
-        // Abrir la barra de búsqueda si se hace clic en el botón de búsqueda
-        if (searchButton) {
-            const searchView = document.getElementById('searchView');
-            if (searchView) {
-                searchView.style.display = 'flex';
-            }
+    // Evento de click para manejar la apertura y cierre de la barra de búsqueda
+    document.addEventListener('click', (event) => {
+        const { searchButton, closeSearchButton, searchView, searchInput, clearButton } = getElements();
+        
+        if (event.target.closest('button[aria-label="Buscar"]')) {
+            searchView.style.display = 'flex';
         }
 
-        // Cerrar la barra de búsqueda si se hace clic en el botón de cerrar
-        if (closeSearchButton) {
-            const searchView = document.getElementById('searchView');
-            if (searchView) {
-                searchView.style.display = 'none';
-            }
+        if (event.target.closest('#closeSearch')) {
+            searchView.style.display = 'none';
+            searchInput.value = '';
+            clearButton.style.display = 'none';
+        }
+    });
+
+    // Evento input para mostrar o esconder el botón de limpiar según el contenido del input
+    document.addEventListener('input', (event) => {
+        const { searchInput, clearButton } = getElements();
+        
+        if (event.target === searchInput) {
+            clearButton.style.display = searchInput.value ? 'block' : 'none';
+        }
+    });
+
+    // Evento de click para limpiar el input
+    document.addEventListener('click', (event) => {
+        const { searchInput, clearButton } = getElements();
+        
+        if (event.target === clearButton) {
+            searchInput.value = '';
+            clearButton.style.display = 'none';
+            searchInput.focus();
+        }
+    });
+
+    // Evento para cerrar la barra de búsqueda con la tecla Escape
+    document.addEventListener('keydown', (e) => {
+        const { searchView, searchInput, clearButton } = getElements();
+        
+        if (e.key === 'Escape' && searchView.style.display === 'flex') {
+            searchView.style.display = 'none';
+            searchInput.value = '';
+            clearButton.style.display = 'none';
         }
     });
 });

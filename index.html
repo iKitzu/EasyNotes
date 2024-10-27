@@ -64,18 +64,35 @@
             </div>
         </header>
         <div id="searchView" class="search-view">
-            <header>
-                <button id="closeSearch" class="icon-button" aria-label="Cerrar búsqueda">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-                <input type="text" placeholder="Buscar notas..." class="search-input">
-            </header>
-            <main>
-                <p>Aquí aparecerán los resultados de la búsqueda...</p>
-            </main>
+            <div class="search-bar">
+                <div class="search-input-container">
+                    <button class="close-button" id="closeSearch">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        placeholder="Search..." 
+                        id="searchInput"
+                    >
+                    <button class="clear-button" id="clearSearch">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="search-results">
+                <div class="no-results">
+                    <img src="/assets/img/cuate.png" alt="No results illustration" class="no-results-image">
+                    <p class="no-results-text">File not found. Try searching again.</p>
+                </div>
+            </div>
         </div>
         
         <main id="notesContainer">
