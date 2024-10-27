@@ -571,23 +571,24 @@ function initializeSearch() {
     const searchResults = document.querySelector('.search-results');
     const noResults = document.querySelector('.no-results');
 
-    // Función para renderizar resultados de búsqueda
     function renderSearchResults() {
         // Limpiar resultados anteriores
-        while (searchResults.firstChild) {
-            searchResults.removeChild(searchResults.firstChild);
-        }
-
+        searchResults.innerHTML = '';
+    
+        const searchTerm = document.getElementById('searchInput').value.trim();
+    
+        // Recrear el div de no-results con el término de búsqueda
+        const noResultsDiv = document.createElement('div');
+        noResultsDiv.className = 'no-results';
+        noResultsDiv.innerHTML = `
+            <img src="/assets/img/cuate.png" alt="No results illustration" class="no-results-image">
+            <p class="no-results-text">There are no results for ${searchTerm}...</p>
+        `;
+    
         // Verificar si no hay resultados
         if (filteredNotes.length === 0) {
-            if (noResults) {
-                noResults.style.display = 'block';
-            }
+            searchResults.appendChild(noResultsDiv);
             return;
-        }
-
-        if (noResults) {
-            noResults.style.display = 'none';
         }
         
         // Crear contenedor para las notas filtradas
@@ -601,7 +602,7 @@ function initializeSearch() {
             gap: 16px;
             overflow-y: auto;
         `;
-
+    
         // Renderizar notas filtradas
         filteredNotes.forEach((note, index) => {
             const noteElement = document.createElement('div');
@@ -611,7 +612,7 @@ function initializeSearch() {
                 <div class="note-title">${truncateTitle(note.title)}</div>
                 <div class="note-preview">${truncateText(note.content)}</div>
             `;
-
+    
             noteElement.addEventListener('click', () => {
                 isSearching = false;
                 if (searchView) {
@@ -620,10 +621,10 @@ function initializeSearch() {
                 searchInput.value = '';
                 showNoteDetail(note, notes.indexOf(note));
             });
-
+    
             notesContainer.appendChild(noteElement);
         });
-
+    
         searchResults.appendChild(notesContainer);
     }
 
