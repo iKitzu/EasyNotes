@@ -36,10 +36,12 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">Font</span>
-                        <span class="info-value">System Font Stack</span>
+                        <span class="info-value">Nunito</span>
                     </div>
                     <div class="made-by">
-                        Made by Kenneth Santiago
+                        Made by  <br>
+                        Kenneth Santiago and 
+                        Juan David Rivero
                     </div>
                 </div>
             </div>
@@ -61,8 +63,21 @@
                         <circle cx="12" cy="8" r="0.5"></circle>
                     </svg>
                 </button>
+                <button class="icon-button" aria-label="Cerrar sesión" onclick="handleLogout()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 12H3"></path>
+                        <path d="M10 17l5-5-5-5"></path>
+                        <path d="M21 19V5a2 2 0 0 0-2-2h-7"></path>
+                    </svg>
+                </button>
+                <button class="icon-button" aria-label="Cambiar Tema" onclick="toggleTheme()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                </button>
             </div>
-        </header>
+        </header>        
         <div id="searchView" class="search-view">
             <div class="search-bar">
                 <div class="search-input-container">
@@ -87,7 +102,7 @@
                     <p class="no-results-text">File not found. Try searching again.</p>
                 </div>
             </div>
-        </div>        
+        </div>
         
         <main id="notesContainer">
             <div class="empty-state">
@@ -115,5 +130,6 @@
     
     <script src="/assets/js/script.js"></script>
     <script src="/assets/js/screen.js"></script>
+    <script src="/assets/js/logout.js"></script>
 </body>
 </html>

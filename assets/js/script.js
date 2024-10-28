@@ -231,7 +231,7 @@ function showNoteDetail(note, index) {
 
     function hasChanges() {
         return titleElement.textContent.trim() !== originalTitle || 
-               textElement.textContent.trim() !== originalContent;
+               textElement.innerHTML.trim() !== originalContent;
     }
 
     function handleSave() {
@@ -240,7 +240,7 @@ function showNoteDetail(note, index) {
 
     function saveChanges() {
         const newTitle = titleElement.textContent.trim();
-        const newContent = textElement.textContent.trim();
+        const newContent = textElement.innerHTML.replace(/\n/g, '<br>').trim(); // Actualizado para saltos de línea
         
         if (newTitle && newContent) {
             notes[index] = { 
@@ -383,7 +383,7 @@ function createNewNote() {
     }
 
     function hasChanges() {
-        return titleElement.textContent.trim() || textElement.textContent.trim();
+        return titleElement.textContent.trim() || textElement.innerHTML.trim();
     }
 
     function exitNote() {
@@ -394,7 +394,7 @@ function createNewNote() {
 
     function saveNote() {
         const title = titleElement.textContent.trim();
-        const content = textElement.textContent.trim();
+        const content = textElement.innerHTML.trim();
         
         if (title && content) {
             const newNote = {
@@ -461,12 +461,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Función para truncar el texto
+// Función para truncar el texto, ignorando etiquetas HTML como <br>
 function truncateText(text, maxLength = 100) {
     if (!text) return '';
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
+    
+    // Remover las etiquetas <br> u otras etiquetas HTML que puedan afectar el largo del texto
+    const plainText = text.replace(/<br\s*\/?>/gi, ' ');
+    
+    if (plainText.length <= maxLength) return plainText;
+    
+    return plainText.substring(0, maxLength) + '...';
 }
+
 
 // Función separada para truncar títulos (más cortos que el contenido)
 function truncateTitle(text, maxLength = 100) {
@@ -716,3 +722,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSearch();
     setupSearchButton();
 });
+
+
+/* MODO OSCURO - MODO CLARO */
+
+function toggleTheme() {
+    document.body.classList.toggle('light-theme');
+}
