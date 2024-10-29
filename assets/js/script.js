@@ -557,37 +557,46 @@ updateView();
 // ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Estado de la aplicación y búsqueda
+let allNotes = [];
 let filteredNotes = [];
 let isSearching = false;
 
 // Función para inicializar la búsqueda
-function initializeSearch() {
+async function initializeSearch() {
     const searchView = document.getElementById('searchView');
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.querySelector('.search-results');
-    const noResults = document.querySelector('.no-results');
 
+    // Obtener las notas del usuario al inicializar
+    const userId = localStorage.getItem('userId'); // Obtener el userId de Local Storage
+    try {
+        const response = await fetch(`http://172.16.101.158:8080/notes/api/notas/usuario/${userId}`);
+        if (response.ok) {
+            allNotes = await response.json(); // Guardar todas las notas del usuario en la variable `allNotes`
+        } else {
+            console.error('Error al obtener las notas del usuario desde la API.');
+        }
+    } catch (error) {
+        console.error('Error de red al intentar obtener las notas:', error);
+    }
+
+    // Renderizar resultados de búsqueda
     function renderSearchResults() {
-        // Limpiar resultados anteriores
         searchResults.innerHTML = '';
-    
-        const searchTerm = document.getElementById('searchInput').value.trim();
-    
-        // Recrear el div de no-results con el término de búsqueda
+        const searchTerm = searchInput.value.trim();
+
         const noResultsDiv = document.createElement('div');
         noResultsDiv.className = 'no-results';
         noResultsDiv.innerHTML = `
             <img src="/assets/img/cuate.png" alt="No results illustration" class="no-results-image">
             <p class="no-results-text">There are no results for ${searchTerm}...</p>
         `;
-    
-        // Verificar si no hay resultados
+
         if (filteredNotes.length === 0) {
             searchResults.appendChild(noResultsDiv);
             return;
         }
-        
-        // Crear contenedor para las notas filtradas
+
         const notesContainer = document.createElement('div');
         notesContainer.className = 'filtered-notes';
         notesContainer.style.cssText = `
@@ -598,29 +607,28 @@ function initializeSearch() {
             gap: 16px;
             overflow-y: auto;
         `;
-    
-        // Renderizar notas filtradas
-        filteredNotes.forEach((note, index) => {
+
+        filteredNotes.forEach(note => {
             const noteElement = document.createElement('div');
             noteElement.classList.add('note');
             noteElement.style.backgroundColor = note.color;
             noteElement.innerHTML = `
-                <div class="note-title">${truncateTitle(note.title)}</div>
-                <div class="note-preview">${truncateText(note.content)}</div>
+                <div class="note-title">${truncateTitle(note.titulo)}</div>
+                <div class="note-preview">${truncateText(note.contenido)}</div>
             `;
-    
+
             noteElement.addEventListener('click', () => {
                 isSearching = false;
                 if (searchView) {
                     searchView.style.display = 'none';
                 }
                 searchInput.value = '';
-                showNoteDetail(note, notes.indexOf(note));
+                showNoteDetail(note, allNotes.indexOf(note));
             });
-    
+
             notesContainer.appendChild(noteElement);
         });
-    
+
         searchResults.appendChild(notesContainer);
     }
 
@@ -632,27 +640,25 @@ function initializeSearch() {
             return;
         }
 
-        searchTerm = searchTerm.toLowerCase();
-        filteredNotes = notes.filter(note => 
-            note.title.toLowerCase().includes(searchTerm) ||
-            note.content.toLowerCase().includes(searchTerm)
+        const term = searchTerm.toLowerCase();
+        filteredNotes = allNotes.filter(note =>
+            note.titulo.toLowerCase().includes(term) || 
+            note.contenido.toLowerCase().includes(term)
         );
         renderSearchResults();
     }
 
-    // Remover event listeners anteriores
+    // Clonar y actualizar elementos
     const oldSearchInput = searchInput.cloneNode(true);
     searchInput.parentNode.replaceChild(oldSearchInput, searchInput);
-    
+
     const oldCloseButton = document.getElementById('closeSearch');
     const newCloseButton = oldCloseButton.cloneNode(true);
     oldCloseButton.parentNode.replaceChild(newCloseButton, oldCloseButton);
 
-    // Actualizar referencias después de clonar
     const newSearchInput = document.getElementById('searchInput');
     const closeSearchButton = document.getElementById('closeSearch');
 
-    // Añadir nuevos event listeners
     newSearchInput.addEventListener('input', (e) => {
         filterNotes(e.target.value);
     });
@@ -664,9 +670,10 @@ function initializeSearch() {
         }
         newSearchInput.value = '';
         filteredNotes = [];
-        renderSearchResults(); // Asegúrate de renderizar para limpiar resultados
+        renderSearchResults(); // Limpia resultados
     });
 }
+
 
 // Modificar la función updateView para incluir la reinicialización de la búsqueda
 async function updateView() {
