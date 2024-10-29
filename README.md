@@ -8,7 +8,7 @@ Esta aplicación está en fase de desarrollo y es producto de la colaboración d
 - **Frontend:** Kenneth Santiago Ceballos Sierra: Implementación de la interfaz de usuario y la lógica del cliente.
 - **Backend:** Juan David Rivero Romero: Desarrollo de la API y la gestión de autenticación mediante JWT.
 
-> **Estado actual:** El proyecto aún está en construcción y cuenta con una arquitectura básica de frontend y backend. En la versión actual, la gestión de notas se realiza a través de Local Storage, y se está trabajando en la integración de una API que permita la autenticación y el almacenamiento de datos en una base de datos remota.
+> **Estado actual:** El proyecto aún está en construcción y cuenta con una arquitectura básica de frontend y backend. En la versión actual, las notas se almacenan en **Local Storage**, mientras se trabaja en la integración de una API para conectar las notas con una base de datos y ofrecer autenticación.
 
 ## ⚠️ Problemática
 
@@ -86,9 +86,9 @@ Para ejecutar este proyecto en local, asegúrate de tener instalado Visual Studi
    cd aplicacion-notas
    ```
    
-2. **Abre `index.html` en tu navegador** para visualizar la aplicación.
+2. **Prueba la aplicación abriendo `index.html` en tu navegador** o **accediendo a** [http://172.16.101.159/](http://172.16.101.159/).
 
-3.  **Disfruta** 😄
+3. **Disfruta** 😄
 
 ### Uso
 
