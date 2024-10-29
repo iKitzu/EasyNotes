@@ -57,7 +57,7 @@ async function handleSignup(event) {
 
         // Redirigir a la página de inicio de sesión después de 2 segundos
         setTimeout(() => {
-            window.location.href = 'index.html';
+            window.location.href = 'http://172.16.101.159/index.html';
         }, 2000);
     } catch (error) {
         passwordError.textContent = error.message;

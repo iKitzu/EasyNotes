@@ -1,6 +1,17 @@
 // Estado de la aplicación
 let notes = JSON.parse(localStorage.getItem('notes')) || [];
 
+function showUserId() {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+        console.log('ID de usuario almacenado en localStorage:', userId);
+    } else {
+        console.log('No se encontró ningún ID de usuario en localStorage.');
+    }
+}
+
+showUserId();
+
 // Función para guardar notas en localStorage
 function saveNotes() {
     localStorage.setItem('notes', JSON.stringify(notes));
@@ -23,7 +34,7 @@ function setupEventListeners() {
     }
 }
 
-function setupSwipeToDelete(noteElement, index) {
+function setupSwipeToDelete(noteElement, note) {
     let startX;
     let isSwiping = false;
     const deleteOverlay = document.createElement('div');
@@ -51,21 +62,11 @@ function setupSwipeToDelete(noteElement, index) {
 
     noteElement.appendChild(deleteOverlay);
 
-    // Crear la modal de confirmación
     const deleteModal = document.createElement('div');
     deleteModal.innerHTML = `
         <div id="deleteNoteDialog" class="modal-overlay" style="display: none;">
             <div class="modal">
                 <div class="flex flex-col items-center mb-4">
-                    <div class="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center mb-3">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 6h18"/>
-                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                            <line x1="10" y1="11" x2="10" y2="17"/>
-                            <line x1="14" y1="11" x2="14" y2="17"/>
-                        </svg>
-                    </div>
                     <h3 class="text-lg font-semibold text-center">Delete Note</h3>
                     <p class="text-gray-500 text-center mt-2">Are you sure you want to delete this note? This action cannot be undone.</p>
                 </div>
@@ -108,11 +109,23 @@ function setupSwipeToDelete(noteElement, index) {
         }
     });
 
-    // Event listeners para la modal
-    confirmDeleteButton.addEventListener('click', () => {
-        notes.splice(index, 1);
-        saveNotes();
-        updateView();
+    // Event listener para confirmar eliminación
+    confirmDeleteButton.addEventListener('click', async () => {
+        try {
+            const response = await fetch(`http://172.16.101.158:8080/notes/api/notas/${note.id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                updateView();  // Refrescar las notas para eliminar la nota borrada
+            } else {
+                showErrorModal('Error al eliminar la nota en la base de datos.');
+            }
+        } catch (error) {
+            showErrorModal('No se pudo conectar al servidor.');
+            console.error('Error de red:', error);
+        }
+
         deleteDialog.style.display = 'none';
     });
 
@@ -120,21 +133,18 @@ function setupSwipeToDelete(noteElement, index) {
         deleteDialog.style.display = 'none';
         deleteOverlay.style.opacity = '0';
     });
-
-    // Limpiar la modal cuando se elimine la nota
-    noteElement.addEventListener('remove', () => {
-        deleteModal.remove();
-    });
 }
 
-// Modify the showNoteDetail function to include state for the confirmation dialogs
-function showNoteDetail(note, index) {
+
+
+// Modificar la función showNoteDetail para enviar los cambios a la API y manejar los diálogos de confirmación
+async function showNoteDetail(note) {
     const mainContainer = document.querySelector('.app');
     const previousContent = mainContainer.innerHTML;
     
     mainContainer.classList.add('fullscreen-mode');
     
-    // Add dialog containers to the HTML
+    // Mostrar el diálogo en HTML
     mainContainer.innerHTML = `
         <div id="saveChangesDialog" class="modal-overlay" style="display: none;">
             <div class="modal">
@@ -202,8 +212,8 @@ function showNoteDetail(note, index) {
         </header>
         <main class="note-detail-page">
             <div class="note-detail-content">
-                <h1 class="note-detail-title" contenteditable="true">${note.title}</h1>
-                <div class="note-detail-text" contenteditable="true">${note.content}</div>
+                <h1 class="note-detail-title" contenteditable="true">${note.titulo}</h1>
+                <div class="note-detail-text" contenteditable="true">${note.contenido}</div>
                 <br><br><br><br><br><br>
             </div>
         </main>
@@ -217,8 +227,8 @@ function showNoteDetail(note, index) {
     const discardChangesDialog = document.querySelector('#discardChangesDialog');
     
     let isEditing = false;
-    let originalTitle = note.title;
-    let originalContent = note.content;
+    let originalTitle = note.titulo;
+    let originalContent = note.contenido;
 
     function toggleSaveButton(show) {
         saveButton.style.display = show ? 'flex' : 'none';
@@ -234,27 +244,38 @@ function showNoteDetail(note, index) {
                textElement.innerHTML.trim() !== originalContent;
     }
 
-    function handleSave() {
-        saveChangesDialog.style.display = 'flex';
-    }
-
-    function saveChanges() {
+    async function saveChanges() {
         const newTitle = titleElement.textContent.trim();
-        const newContent = textElement.innerHTML.replace(/\n/g, '<br>').trim(); // Actualizado para saltos de línea
+        const newContent = textElement.innerHTML.replace(/\n/g, '<br>').trim();
         
         if (newTitle && newContent) {
-            notes[index] = { 
-                ...notes[index], 
-                title: newTitle, 
-                content: newContent 
-            };
-            saveNotes();
-            toggleSaveButton(false);
-            originalTitle = newTitle;
-            originalContent = newContent;
-            saveChangesDialog.style.display = 'none';
+            try {
+                const response = await fetch(`http://172.16.101.158:8080/notes/api/notas/${note.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        ...note,
+                        titulo: newTitle,
+                        contenido: newContent 
+                    })
+                });
+
+                if (response.ok) {
+                    originalTitle = newTitle;
+                    originalContent = newContent;
+                    toggleSaveButton(false);
+                    saveChangesDialog.style.display = 'none';
+                    console.log('Changes saved successfully.');
+                } else {
+                    console.error('Error saving changes.');
+                }
+            } catch (error) {
+                console.error('Network error while saving changes:', error);
+            }
         } else {
-            showErrorModal('Title and content cannot be empty.');
+            alert('Title and content cannot be empty.');
         }
     }
 
@@ -275,7 +296,7 @@ function showNoteDetail(note, index) {
     // Event Listeners
     titleElement.addEventListener('input', handleEditStart);
     textElement.addEventListener('input', handleEditStart);
-    saveButton.addEventListener('click', handleSave);
+    saveButton.addEventListener('click', () => saveChangesDialog.style.display = 'flex');
     backButton.addEventListener('click', handleBack);
 
     // Save Changes Dialog
@@ -289,7 +310,7 @@ function showNoteDetail(note, index) {
     document.querySelector('#keepButton').addEventListener('click', () => {
         discardChangesDialog.style.display = 'none';
     });
-
+    
     titleElement.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -297,6 +318,7 @@ function showNoteDetail(note, index) {
         }
     });
 }
+
 
 function createNewNote() {
     const mainContainer = document.querySelector('.app');
@@ -369,7 +391,6 @@ function createNewNote() {
             </div>
         </main>
     `;
-
     const backButton = document.querySelector('.back-button');
     const saveButton = document.querySelector('.save-button');
     const titleElement = document.querySelector('.note-detail-title');
@@ -377,14 +398,7 @@ function createNewNote() {
     const saveChangesDialog = document.querySelector('#saveChangesDialog');
     const discardChangesDialog = document.querySelector('#discardChangesDialog');
 
-    function getRandomColor() {
-        const colors = ['#fd99ff', '#ff9e9e', '#91f48f', '#fff599', '#9effff', '#b69cff'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    }
-
-    function hasChanges() {
-        return titleElement.textContent.trim() || textElement.innerHTML.trim();
-    }
+    const userId = localStorage.getItem('userId'); // Recuperar userId
 
     function exitNote() {
         mainContainer.classList.remove('fullscreen-mode');
@@ -392,35 +406,50 @@ function createNewNote() {
         updateView();
     }
 
-    function saveNote() {
+    async function saveNote() {
         const title = titleElement.textContent.trim();
         const content = textElement.innerHTML.trim();
         
         if (title && content) {
+            // Crear objeto de la nota
             const newNote = {
-                title,
-                content,
-                color: getRandomColor(),
-                createdAt: new Date().toISOString()
+                titulo: title,
+                contenido: content
             };
-            
-            notes.unshift(newNote);
-            saveNotes();
-            exitNote();
+
+            try {
+                // Enviar solicitud POST al backend
+                const response = await fetch(`http://172.16.101.158:8080/notes/api/notas/usuario/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newNote)
+                });
+
+                if (response.ok) {
+                    exitNote(); // Salir del modo de creación después de guardar
+                } else {
+                    showErrorModal('Error al guardar la nota en la base de datos.');
+                }
+            } catch (error) {
+                showErrorModal('No se pudo conectar al servidor.');
+                console.error('Error de red:', error);
+            }
         } else {
-            showErrorModal('Title and content cannot be empty.');
+            showErrorModal('El título y el contenido no pueden estar vacíos.');
             saveChangesDialog.style.display = 'none';
         }
     }
 
     function handleSave() {
-        if (hasChanges()) {
+        if (titleElement.textContent.trim() || textElement.innerHTML.trim()) {
             saveChangesDialog.style.display = 'flex';
         }
     }
 
     function handleBack() {
-        if (hasChanges()) {
+        if (titleElement.textContent.trim() || textElement.innerHTML.trim()) {
             discardChangesDialog.style.display = 'flex';
         } else {
             exitNote();
@@ -640,44 +669,65 @@ function initializeSearch() {
 }
 
 // Modificar la función updateView para incluir la reinicialización de la búsqueda
-function updateView() {
+async function updateView() {
     const container = document.getElementById('notesContainer');
-    
-    if (notes.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <img src="/assets/img/rafiki.png" alt="Empty notes illustration">
-                <p>Create your first note!</p>
-            </div>
-        `;
-    } else {
-        container.innerHTML = '';
-        notes.forEach((note, index) => {
-            const noteElement = document.createElement('div');
-            noteElement.classList.add('note');
-            noteElement.style.backgroundColor = note.color;
-            noteElement.innerHTML = `
-                <div class="note-title">${truncateTitle(note.title)}</div>
-                <div class="note-preview">${truncateText(note.content)}</div>
-            `;
+    const userId = localStorage.getItem('userId'); // Obtener el userId
+
+    try {
+        // Solicitud GET a la API para obtener las notas del usuario
+        const response = await fetch(`http://172.16.101.158:8080/notes/api/notas/usuario/${userId}`);
+        
+        if (response.ok) {
+            const notes = await response.json(); // Asume que la API devuelve un array de notas
             
-            if (note.title.length > 40) {
-                noteElement.querySelector('.note-title').title = note.title;
+            // Añadir console.log para mostrar el JSON de las notas
+            console.log('Notas obtenidas:', JSON.stringify(notes, null, 2)); // Formatear el JSON para una mejor legibilidad
+
+            if (notes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="/assets/img/rafiki.png" alt="Empty notes illustration">
+                        <p>Create your first note!</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '';
+                notes.forEach((note) => {
+                    const noteElement = document.createElement('div');
+                    noteElement.classList.add('note');
+                    noteElement.style.backgroundColor = note.color; // Cambiar color si es necesario
+                    noteElement.innerHTML = `
+                        <div class="note-title">${truncateTitle(note.titulo)}</div>
+                        <div class="note-preview">${truncateText(note.contenido)}</div>
+                    `;
+                    
+                    if (note.titulo.length > 40) {
+                        noteElement.querySelector('.note-title').title = note.titulo;
+                    }
+                    
+                    noteElement.addEventListener('click', () => {
+                        showNoteDetail(note); // Cambiar para pasar el objeto completo
+                    });
+
+                    // Aquí se pasa el objeto note completo a setupSwipeToDelete
+                    setupSwipeToDelete(noteElement, note); 
+                    container.appendChild(noteElement);
+                });
             }
-            
-            noteElement.addEventListener('click', () => {
-                showNoteDetail(note, index);
-            });
 
-            setupSwipeToDelete(noteElement, index);
-            container.appendChild(noteElement);
-        });
+            setupEventListeners();
+            initializeSearch(); // Reinicializar la búsqueda
+            setupSearchButton(); // Configurar el botón de búsqueda
+        } else {
+            console.error('Error al recuperar las notas desde la API.');
+        }
+    } catch (error) {
+        console.error('Error de red al intentar obtener las notas:', error);
     }
-
-    setupEventListeners();
-    initializeSearch(); // Reinicializar la búsqueda
-    setupSearchButton(); // Nueva función para configurar el botón de búsqueda
 }
+
+
+
 
 // Nueva función para configurar el botón de búsqueda
 function setupSearchButton() {

@@ -90,10 +90,6 @@ Para ejecutar este proyecto en local, asegúrate de tener instalado Visual Studi
 
 3. **Disfruta** 😄
 
-### Documentación Endpoints
-
-Swagger [https://app.swaggerhub.com/apis-docs/KENNETHSANTIAGOC/EasyNotes/1.0.0]
-
 ### Uso
 
 1. 📝 **Registro e Inicio de Sesión:** Crea una cuenta y accede a la plataforma.

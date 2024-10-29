@@ -4,17 +4,11 @@ function handleLogin(event) {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    const loginData = {
-        email: email,
-        password: password
-    };
+    const loginData = { email, password };
 
-    // Actualiza la URL para que apunte al nuevo endpoint
     fetch('http://172.16.101.158:8080/notes/auth/login', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginData)
     })
     .then(response => {
@@ -30,14 +24,24 @@ function handleLogin(event) {
         return response.json();
     })
     .then(data => {
-        const token = data.token; // Asegúrate de que la API devuelva un campo token
+        console.log('Respuesta del servidor:', data); // Verifica la respuesta
 
-        // Guardar el token en el localStorage
+        const token = data.token;
+
         if (token) {
             localStorage.setItem('token', token);
+            console.log('Token guardado en localStorage:', token); // Verifica si se guarda correctamente
 
-            // Redirigir a otra página después del inicio de sesión exitoso
-            window.location.href = '/assets/view/index.html'; // Cambia esto según tu estructura de rutas
+            // Decodifica el token para obtener el ID del usuario
+            const decodedToken = jwt_decode(token);
+            const userId = decodedToken.sub;  // El campo "sub" ahora contiene el ID del usuario
+
+            // Guarda el ID en localStorage
+            localStorage.setItem('userId', userId);
+            console.log('ID de usuario guardado en localStorage:', userId); // Verifica si se guarda correctamente
+
+            // Redirigir al usuario después de iniciar sesión
+            window.location.href = 'http://172.16.101.159/assets/view/EasyNotes.html';
         } else {
             throw new Error('No se recibió el token de autenticación.');
         }
@@ -46,6 +50,7 @@ function handleLogin(event) {
         const errorMessage = document.getElementById('errorMessage');
         errorMessage.style.display = 'block';
         errorMessage.textContent = error.message;
+        console.error('Error durante el inicio de sesión:', error); // Verifica si hay errores
     });
 }
 

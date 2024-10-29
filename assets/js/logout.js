@@ -1,7 +1,7 @@
 function handleLogout() {
     // Elimina el token y cualquier otro dato del localStorage
     localStorage.removeItem('token');
-    localStorage.removeItem('usuario'); // Elimina otros datos si es necesario
+    localStorage.removeItem('userId'); // Elimina otros datos si es necesario
 
     // Redirige a la página principal
     window.location.href = '/index.html'; // Cambia '/' por la URL de la página a la que quieres redirigir
